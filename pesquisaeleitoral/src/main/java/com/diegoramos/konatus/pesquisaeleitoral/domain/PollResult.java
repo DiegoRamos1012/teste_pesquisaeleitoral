@@ -31,7 +31,7 @@ public class PollResult extends BaseEntity {
 
     private PollResult(Poll poll, Municipality municipality, Candidate candidate, BigDecimal percentage) {
         if (percentage.compareTo(BigDecimal.ZERO) < 0 || percentage.compareTo(new BigDecimal("100")) > 0) {
-            throw new BusinessException("Percentage must be between 0 and 100");
+            throw new BusinessException("A porcentagem deve estar entre 0 a 100");
         }
         this.poll = poll;
         this.municipality = municipality;
