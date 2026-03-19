@@ -1,8 +1,11 @@
 package com.diegoramos.konatus.pesquisaeleitoral.controller;
 
-import com.diegoramos.konatus.pesquisaeleitoral.service.poll.CandidateWeightedResult;
-import com.diegoramos.konatus.pesquisaeleitoral.service.poll.PollImportResult;
-import com.diegoramos.konatus.pesquisaeleitoral.service.poll.PollImportService;
+import com.diegoramos.konatus.pesquisaeleitoral.dto.candidateDTO.CandidateWeightedResultDTO;
+import com.diegoramos.konatus.pesquisaeleitoral.dto.pollDTO.PollImportMapper;
+import com.diegoramos.konatus.pesquisaeleitoral.dto.pollDTO.PollImportResponseDTO;
+import com.diegoramos.konatus.pesquisaeleitoral.service.poll.importer.CandidateWeightedResult;
+import com.diegoramos.konatus.pesquisaeleitoral.service.poll.importer.PollImportResult;
+import com.diegoramos.konatus.pesquisaeleitoral.service.poll.importer.PollImportService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,6 +33,9 @@ class PollImportControllerTest {
     @MockBean
     private PollImportService pollImportService;
 
+    @MockBean
+    private PollImportMapper pollImportMapper;
+
     @Test
     void shouldImportPollCsvAndReturnWeightedCandidates() throws Exception {
         UUID candidateId = UUID.randomUUID();
@@ -39,8 +45,19 @@ class PollImportControllerTest {
                 1000000L,
                 List.of(new CandidateWeightedResult(candidateId, "Maria Silva", new BigDecimal("42.35")))
         );
+        PollImportResponseDTO response = new PollImportResponseDTO(
+                "PESQ-2026-01",
+                LocalDate.of(2026, 3, 1),
+                1000000L,
+                List.of(new CandidateWeightedResultDTO(
+                        candidateId,
+                        "Maria Silva",
+                        new BigDecimal("42.35")
+                ))
+        );
 
         given(pollImportService.researchImport(any())).willReturn(result);
+        given(pollImportMapper.toResponse(result)).willReturn(response);
 
         MockMultipartFile file = new MockMultipartFile(
                 "file",

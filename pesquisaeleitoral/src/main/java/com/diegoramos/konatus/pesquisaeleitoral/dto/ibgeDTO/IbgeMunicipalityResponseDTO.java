@@ -1,11 +1,11 @@
-package com.diegoramos.konatus.pesquisaeleitoral.dto;
+package com.diegoramos.konatus.pesquisaeleitoral.dto.ibgeDTO;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record IbgeStateResponseDTO(
+public record IbgeMunicipalityResponseDTO(
         Long id,
-        String sigla,
         String nome
 ) {
 }
+

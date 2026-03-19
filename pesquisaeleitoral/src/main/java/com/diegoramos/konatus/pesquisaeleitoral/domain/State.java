@@ -1,10 +1,13 @@
 package com.diegoramos.konatus.pesquisaeleitoral.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.Locale;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -12,29 +15,20 @@ import lombok.NoArgsConstructor;
 @Table(name = "state")
 public class State extends BaseEntity {
 
+    @Column(nullable = false, length = 2)
     private String stateAcronym;
 
-    /**
-     * Construtor privado para uso interno e factory method.
-     */
     private State(String name, String stateAcronym) {
-        this.name = name;
-        this.stateAcronym = stateAcronym;
+        this.name = requireText(name, "Nome do estado");
+        this.stateAcronym = requireText(stateAcronym, "Sigla do estado").toUpperCase(Locale.ROOT);
     }
 
-    /**
-     * Cria uma nova instância de State.
-     *
-     * @param name        Nome do produto
-     * @param stateAcronym  Sigla do estado
-     * @return Produto criado
-     */
     public static State create(String name, String stateAcronym) {
         return new State(name, stateAcronym);
     }
 
     public void updateName(String name) {
-        this.name = name;
+        this.name = requireText(name, "Nome do estado");
     }
 
 }

@@ -1,9 +1,9 @@
-package com.diegoramos.konatus.pesquisaeleitoral.service.poll;
+package com.diegoramos.konatus.pesquisaeleitoral.service.ibge;
 
-import com.diegoramos.konatus.pesquisaeleitoral.dto.IbgeMunicipalityResponseDTO;
-import com.diegoramos.konatus.pesquisaeleitoral.dto.IbgeStateResponseDTO;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.diegoramos.konatus.pesquisaeleitoral.dto.ibgeDTO.IbgeMunicipalityResponseDTO;
+import com.diegoramos.konatus.pesquisaeleitoral.dto.ibgeDTO.IbgeStateResponseDTO;
 import com.diegoramos.konatus.pesquisaeleitoral.exceptions.BusinessException;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -119,4 +119,5 @@ public class IbgeApiClient {
         return () -> iterator;
     }
 }
+
 

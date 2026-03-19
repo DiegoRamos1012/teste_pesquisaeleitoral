@@ -14,6 +14,8 @@ import java.math.BigDecimal;
 @Table(name = "poll_result")
 public class PollResult extends BaseEntity {
 
+    private static final BigDecimal MAX_PERCENTAGE = new BigDecimal("100");
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "poll_id", nullable = false)
     private Poll poll;
@@ -30,7 +32,10 @@ public class PollResult extends BaseEntity {
     private BigDecimal percentage;
 
     private PollResult(Poll poll, Municipality municipality, Candidate candidate, BigDecimal percentage) {
-        if (percentage.compareTo(BigDecimal.ZERO) < 0 || percentage.compareTo(new BigDecimal("100")) > 0) {
+        if (poll == null || municipality == null || candidate == null) {
+            throw new BusinessException("Pesquisa, municipio e candidato sao obrigatorios");
+        }
+        if (percentage == null || percentage.compareTo(BigDecimal.ZERO) < 0 || percentage.compareTo(MAX_PERCENTAGE) > 0) {
             throw new BusinessException("A porcentagem deve estar entre 0 a 100");
         }
         this.name = poll.getName() + "-" + municipality.getName() + "-" + candidate.getName();

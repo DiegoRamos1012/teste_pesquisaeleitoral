@@ -1,5 +1,6 @@
 package com.diegoramos.konatus.pesquisaeleitoral.domain;
 
+import com.diegoramos.konatus.pesquisaeleitoral.exceptions.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -49,5 +50,12 @@ public abstract class BaseEntity {
 
     protected void updateLastTimeChanged() {
         this.lastTimeChanged = LocalDateTime.now();
+    }
+
+    protected String requireText(String value, String fieldName) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new BusinessException(fieldName + " nao pode ser vazio");
+        }
+        return value.trim();
     }
 }

@@ -1,4 +1,4 @@
-package com.diegoramos.konatus.pesquisaeleitoral.service.poll;
+package com.diegoramos.konatus.pesquisaeleitoral.service.ibge;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,4 +21,5 @@ public class IbgeSyncScheduler {
 		}
 	}
 }
+
 

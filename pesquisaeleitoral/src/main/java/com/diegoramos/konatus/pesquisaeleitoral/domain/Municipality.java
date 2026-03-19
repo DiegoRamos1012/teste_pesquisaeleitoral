@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "municipiality")
 public class Municipality extends BaseEntity {
+
+    @Column(nullable = false)
     private int population;
 
     // Melhora performance impedindo que carregue todos os estados junto com cada município
@@ -19,8 +21,14 @@ public class Municipality extends BaseEntity {
     private State state;
 
     private Municipality(String name, int population, State state) {
-        this.name = name;
+        this.name = requireText(name, "Nome do municipio");
+        if (population < 0) {
+            throw new BusinessException("Populacao nao pode ser negativa");
+        }
         this.population = population;
+        if (state == null) {
+            throw new BusinessException("Estado do municipio nao pode ser nulo");
+        }
         this.state = state;
     }
 
@@ -33,6 +41,10 @@ public class Municipality extends BaseEntity {
             throw new BusinessException("Populacao nao pode ser negativa");
         }
         this.population = population;
+    }
+
+    public void updateName(String name) {
+        this.name = requireText(name, "Nome do municipio");
     }
 
 }

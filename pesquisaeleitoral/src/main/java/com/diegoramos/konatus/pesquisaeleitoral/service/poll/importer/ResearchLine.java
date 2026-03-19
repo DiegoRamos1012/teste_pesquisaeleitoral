@@ -1,4 +1,4 @@
-package com.diegoramos.konatus.pesquisaeleitoral.service.poll;
+package com.diegoramos.konatus.pesquisaeleitoral.service.poll.importer;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,3 +13,4 @@ public record ResearchLine(
         BigDecimal percentual
 ) {
 }
+
