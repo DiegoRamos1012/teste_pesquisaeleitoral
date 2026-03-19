@@ -33,4 +33,8 @@ public class State extends BaseEntity {
         return new State(name, stateAcronym);
     }
 
+    public void updateName(String name) {
+        this.name = name;
+    }
+
 }

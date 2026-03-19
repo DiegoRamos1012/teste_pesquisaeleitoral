@@ -1,5 +1,6 @@
 package com.diegoramos.konatus.pesquisaeleitoral.domain;
 
+import com.diegoramos.konatus.pesquisaeleitoral.exceptions.BusinessException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,6 +26,13 @@ public class Municipality extends BaseEntity {
 
     public static Municipality create(String name, int population, State state) {
         return new Municipality(name, population, state);
+    }
+
+    public void updatePopulation(int population) {
+        if (population < 0) {
+            throw new BusinessException("Populacao nao pode ser negativa");
+        }
+        this.population = population;
     }
 
 }
