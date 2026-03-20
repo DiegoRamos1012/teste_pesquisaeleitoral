@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "municipiality")
+@Table(name = "municipality")
 public class Municipality extends BaseEntity {
 
     @Column(nullable = false)
@@ -23,7 +23,7 @@ public class Municipality extends BaseEntity {
     private Municipality(String name, int population, State state) {
         this.name = requireText(name, "Nome do municipio");
         if (population < 0) {
-            throw new BusinessException("Populacao nao pode ser negativa");
+            throw new BusinessException("População nao pode ser negativa");
         }
         this.population = population;
         if (state == null) {
@@ -38,13 +38,8 @@ public class Municipality extends BaseEntity {
 
     public void updatePopulation(int population) {
         if (population < 0) {
-            throw new BusinessException("Populacao nao pode ser negativa");
+            throw new BusinessException("População nao pode ser negativa");
         }
         this.population = population;
     }
-
-    public void updateName(String name) {
-        this.name = requireText(name, "Nome do municipio");
-    }
-
 }

@@ -12,10 +12,10 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI pesquisaEleitoralOpenApi() {
         return new OpenAPI().info(new Info()
-                .title("Pesquisa Eleitoral API")
-                .description("API para sincronizacao IBGE, importacao de pesquisas e calculo de intencao de votos")
+                .title("Pesquisa Eleitoral API - Teste Konatus")
+                .description("API para sincronização IBGE, importação de pesquisas e cálculo de intencão de votos")
                 .version("v1")
-                .contact(new Contact().name("Equipe Pesquisa Eleitoral")));
+                .contact(new Contact().name("Diego Ramos dos Santos")));
     }
 }
 

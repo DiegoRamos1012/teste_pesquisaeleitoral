@@ -1,22 +1,22 @@
 # Guia de uso do projeto
 
-Este documento mostra como subir a aplicacao e executar o fluxo principal: sincronizar base IBGE e calcular intencao de voto ponderada via importacao de CSV.
+Este documento mostra como subir a aplicação e executar o fluxo principal: sincronizar base IBGE e calcular intenção de voto ponderada via importação de CSV.
 
-## 1) Pre-requisitos
+## 1) Pré-requisitos
 
 - Java 25 instalado e no `PATH`
-- Acesso a internet para consultar APIs do IBGE
+- Acesso à internet para consultar APIs do IBGE
 - Maven Wrapper do projeto (`mvnw.cmd`)
 
-## 2) Subir a aplicacao
+## 2) Subir a aplicação
 
-No diretorio do projeto (`pesquisaeleitoral/pesquisaeleitoral`), execute:
+No diretório do projeto (`pesquisaeleitoral/pesquisaeleitoral`), execute:
 
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
-Se a aplicacao subir com sucesso, ela ficara disponivel em `http://localhost:8080`.
+Se a aplicação subir com sucesso, ela ficará disponível em `http://localhost:8080`.
 
 ## 3) Conferir Swagger
 
@@ -25,31 +25,31 @@ Abra no navegador:
 - `http://localhost:8080/swagger-ui.html`
 - `http://localhost:8080/v3/api-docs`
 
-### Como usar o Swagger na pratica
+### Como usar o Swagger na prática
 
 1. Abra `http://localhost:8080/swagger-ui.html`.
 2. Na tag **IBGE**, execute `POST /api/ibge/sync` com `force=true` para carregar a base local.
 3. Na tag **Pesquisa**, execute `POST /api/polls/import` e envie o arquivo CSV no campo `file`.
-4. Confira no Swagger os exemplos de retorno 200 e os possiveis erros documentados (400/500).
+4. Confira no Swagger os exemplos de retorno 200 e os possíveis erros documentados (400/500).
 
 O Swagger agora documenta:
 
-- descricao funcional de cada endpoint;
-- parametros esperados (`force` e arquivo `file`);
+- descrição funcional de cada endpoint;
+- parâmetros esperados (`force` e arquivo `file`);
 - modelos de resposta com exemplos (`PollImportResponseDTO`, `IbgeSyncResultDTO`);
-- estrutura de erro padrao (`ApiErrorResponseDTO`).
+- estrutura de erro padrão (`ApiErrorResponseDTO`).
 
-## 4) Passo a passo do fluxo da aplicacao
+## 4) Passo a passo do fluxo da aplicação
 
-### Passo 1 - Sincronizar estados e municipios (IBGE)
+### Passo 1 - Sincronizar estados e municípios (IBGE)
 
-A sincronizacao pode ocorrer de duas formas:
+A sincronização pode ocorrer de duas formas:
 
 - Manual, via endpoint:
   - `POST /api/ibge/sync?force=true`
 - Automatizada por cron:
   - Propriedade: `ibge.sync.cron=0 0 3 1 * *`
-  - Significado: roda todo dia 1 de cada mes, as 03:00 (horario do servidor)
+  - Significado: roda todo dia 1 de cada mês, às 03:00 (horário do servidor)
 
 Exemplo PowerShell:
 
@@ -70,9 +70,9 @@ Resposta esperada (exemplo):
 
 ### Passo 2 - Garantir candidatos cadastrados
 
-A importacao de pesquisa exige `candidate_id` existente na base (UUID valido).
+A importação de pesquisa exige `candidate_id` existente na base (UUID válido).
 
-Hoje o projeto nao expoe endpoint de cadastro de candidato. Entao, antes de importar CSV, garanta que existam registros em `candidate`.
+Hoje o projeto não expõe endpoint de cadastro de candidato. Então, antes de importar CSV, garanta que existam registros em `candidate`.
 
 Campos importantes na entidade:
 
@@ -82,7 +82,7 @@ Campos importantes na entidade:
 
 ### Passo 3 - Preparar arquivo CSV da pesquisa
 
-Formato esperado por linha (uma linha por candidato em um municipio):
+Formato esperado por linha (uma linha por candidato em um município):
 
 - `poll_id`
 - `poll_date`
@@ -91,7 +91,7 @@ Formato esperado por linha (uma linha por candidato em um municipio):
 - `candidate_id`
 - `percentual`
 
-Cabecalhos aceitos por alias:
+Cabeçalhos aceitos por alias:
 
 - `poll_id`, `id_pesquisa`
 - `poll_date`, `data_pesquisa`
@@ -112,7 +112,7 @@ PESQ-2026-01,2026-03-01,RJ,Rio de Janeiro,22222222-2222-2222-2222-222222222222,3
 
 Regras importantes:
 
-- O arquivo deve conter apenas uma pesquisa por importacao (mesmo `poll_id` e `poll_date` em todas as linhas).
+- O arquivo deve conter apenas uma pesquisa por importação (mesmo `poll_id` e `poll_date` em todas as linhas).
 - `estado` e `municipio` precisam existir na base sincronizada do IBGE.
 - `candidate_id` precisa existir na base local.
 - `percentual` deve estar entre 0 e 100.
@@ -154,19 +154,19 @@ Resposta esperada (exemplo):
 }
 ```
 
-## 5) Como o calculo ponderado funciona
+## 5) Como o cálculo ponderado funciona
 
 Para cada linha da pesquisa:
 
-1. Busca a populacao do municipio
+1. Busca a população do município
 2. Calcula peso da linha: `percentual * populacao_municipio / 100`
 3. Soma os pesos por candidato
-4. Soma a populacao total dos municipios unicos considerados
+4. Soma a população total dos municípios únicos considerados
 5. Calcula resultado final por candidato:
    - `resultado = (soma_pesos_candidato / populacao_total) * 100`
 6. Ordena candidatos do maior para o menor percentual
 
-Isso permite ponderar o impacto de cada municipio pela sua populacao.
+Isso permite ponderar o impacto de cada município pela sua população.
 
 ## 6) Erros comuns e como resolver
 
@@ -177,18 +177,18 @@ Isso permite ponderar o impacto de cada municipio pela sua populacao.
 - `Candidato nao encontrado`:
   - Confirme se o UUID existe na tabela `candidate`.
 - `percentual deve estar entre 0 e 100`:
-  - Corrija valores invalidos no CSV.
+  - Corrija valores inválidos no CSV.
 - `Arquivo deve conter apenas uma pesquisa por importacao`:
-  - Garanta um unico `poll_id` e `poll_date` no arquivo.
+  - Garanta um único `poll_id` e `poll_date` no arquivo.
 
-## 7) Ordem recomendada para operacao
+## 7) Ordem recomendada para operação
 
-1. Subir aplicacao
+1. Subir aplicação
 2. Sincronizar base IBGE
 3. Garantir candidatos na base
 4. Importar CSV
 5. Analisar resultado ponderado retornado pela API
 
-Com esses passos, o fluxo principal do teste (estimativa de intencao de voto por media ponderada) fica operacional de ponta a ponta.
+Com esses passos, o fluxo principal do teste (estimativa de intenção de voto por média ponderada) fica operacional de ponta a ponta.
 
 

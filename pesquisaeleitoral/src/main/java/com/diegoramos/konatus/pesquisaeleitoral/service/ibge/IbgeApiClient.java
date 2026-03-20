@@ -11,12 +11,16 @@ import org.springframework.web.client.RestClient;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class IbgeApiClient {
 
+    private static final int NO_POPULATION = -1;
+
     private final RestClient localityRestClient;
     private final RestClient sidraRestClient;
+    private final Map<Long, Integer> municipalityPopulationCache = new ConcurrentHashMap<>();
 
     public IbgeApiClient(
             RestClient.Builder restClientBuilder,
@@ -60,6 +64,25 @@ public class IbgeApiClient {
             return null;
         }
 
+        Integer cachedValue = municipalityPopulationCache.get(municipalityCode);
+        if (cachedValue != null) {
+            return cachedValue == NO_POPULATION ? null : cachedValue;
+        }
+
+        Integer latestPopulation = requestMunicipalityPopulationByCode(municipalityCode);
+        municipalityPopulationCache.put(municipalityCode, latestPopulation == null ? NO_POPULATION : latestPopulation);
+        return latestPopulation;
+    }
+
+    public void clearPopulationCache() {
+        municipalityPopulationCache.clear();
+    }
+
+    private Integer requestMunicipalityPopulationByCode(Long municipalityCode) {
+        if (municipalityCode == null) {
+            return null;
+        }
+
         JsonNode response = sidraRestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
@@ -91,7 +114,7 @@ public class IbgeApiClient {
                     latestPopulation = population;
                 }
             } catch (NumberFormatException ignored) {
-                // Ignora chaves nao numericas de periodo.
+                // Ignora chaves não numéricas de período.
             }
         }
 
