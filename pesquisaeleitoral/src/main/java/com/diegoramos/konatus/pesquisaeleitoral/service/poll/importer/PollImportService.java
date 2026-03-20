@@ -6,8 +6,14 @@ import com.diegoramos.konatus.pesquisaeleitoral.domain.Poll;
 import com.diegoramos.konatus.pesquisaeleitoral.domain.PollResult;
 import com.diegoramos.konatus.pesquisaeleitoral.domain.State;
 import com.diegoramos.konatus.pesquisaeleitoral.exceptions.BusinessException;
+import com.diegoramos.konatus.pesquisaeleitoral.repository.MunicipalityRepository;
 import com.diegoramos.konatus.pesquisaeleitoral.repository.PollRepository;
 import com.diegoramos.konatus.pesquisaeleitoral.repository.PollResultRepository;
+import com.diegoramos.konatus.pesquisaeleitoral.service.poll.result.CandidateWeightedResult;
+import com.diegoramos.konatus.pesquisaeleitoral.service.poll.result.PollGroupBreakdown;
+import com.diegoramos.konatus.pesquisaeleitoral.service.poll.result.PollImportResult;
+import com.diegoramos.konatus.pesquisaeleitoral.service.poll.result.ResearchLine;
+import com.diegoramos.konatus.pesquisaeleitoral.service.poll.weighting.PollWeightAccumulator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +32,7 @@ public class PollImportService {
 
     private final PollCsvParser pollCsvParser;
     private final PollReferenceResolver pollReferenceResolver;
+    private final MunicipalityRepository municipalityRepository;
     private final PollRepository pollRepository;
     private final PollResultRepository pollResultRepository;
 
@@ -46,9 +53,10 @@ public class PollImportService {
 
         PollWeightAccumulator weightAccumulator = new PollWeightAccumulator();
         Map<UUID, Candidate> candidatesById = new HashMap<>();
+        Map<UUID, Boolean> populatedStates = new HashMap<>();
 
         for (ResearchLine linha : linhas) {
-            processResearchLine(linha, poll, weightAccumulator, candidatesById);
+            processResearchLine(linha, poll, weightAccumulator, candidatesById, populatedStates);
         }
 
         long totalPopulation = weightAccumulator.totalPopulation();
@@ -57,24 +65,31 @@ public class PollImportService {
         }
 
         List<CandidateWeightedResult> weightedResults = weightAccumulator.buildResults(totalPopulation);
+        List<PollGroupBreakdown> groupBreakdown = weightAccumulator.buildGroupBreakdown();
 
         weightedResults.sort(Comparator.comparing(CandidateWeightedResult::weightedPercentage).reversed());
 
-        return new PollImportResult(pollId, pollDate, totalPopulation, weightedResults);
+        return new PollImportResult(pollId, pollDate, totalPopulation, weightedResults, groupBreakdown);
     }
 
     private void processResearchLine(
             ResearchLine line,
             Poll poll,
             PollWeightAccumulator weightAccumulator,
-            Map<UUID, Candidate> candidatesById
+            Map<UUID, Candidate> candidatesById,
+            Map<UUID, Boolean> populatedStates
     ) {
         State state = pollReferenceResolver.resolveState(line.state());
         Municipality municipality = pollReferenceResolver.resolveMunicipality(line.municipality(), state);
         Candidate candidate = resolveCandidateCached(line.candidateId(), candidatesById);
 
+        if (!populatedStates.containsKey(state.getId())) {
+            weightAccumulator.registerStateMunicipalities(state, municipalityRepository.findAllByState(state));
+            populatedStates.put(state.getId(), true);
+        }
+
         pollResultRepository.save(PollResult.create(poll, municipality, candidate, line.percentual()));
-        weightAccumulator.add(state, municipality, candidate, line.percentual());
+        weightAccumulator.addSample(state, municipality, candidate, line.percentual());
     }
 
     private Candidate resolveCandidateCached(UUID candidateId, Map<UUID, Candidate> candidatesById) {

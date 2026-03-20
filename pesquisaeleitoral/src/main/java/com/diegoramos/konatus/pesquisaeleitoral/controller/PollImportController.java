@@ -3,7 +3,7 @@ package com.diegoramos.konatus.pesquisaeleitoral.controller;
 import com.diegoramos.konatus.pesquisaeleitoral.dto.ApiErrorResponseDTO;
 import com.diegoramos.konatus.pesquisaeleitoral.dto.pollDTO.PollImportMapper;
 import com.diegoramos.konatus.pesquisaeleitoral.dto.pollDTO.PollImportResponseDTO;
-import com.diegoramos.konatus.pesquisaeleitoral.service.poll.importer.PollImportResult;
+import com.diegoramos.konatus.pesquisaeleitoral.service.poll.result.PollImportResult;
 import com.diegoramos.konatus.pesquisaeleitoral.service.poll.importer.PollImportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

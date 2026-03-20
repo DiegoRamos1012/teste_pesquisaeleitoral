@@ -1,12 +1,11 @@
-package com.diegoramos.konatus.pesquisaeleitoral.service.poll.importer;
+package com.diegoramos.konatus.pesquisaeleitoral.service.poll.result;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.UUID;
 
 public record ResearchLine(
         String pollId,
-        LocalDate pollDate,
+        java.time.LocalDate pollDate,
         String state,
         String municipality,
         UUID candidateId,

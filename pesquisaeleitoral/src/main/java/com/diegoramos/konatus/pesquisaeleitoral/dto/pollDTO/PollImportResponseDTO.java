@@ -17,7 +17,10 @@ public record PollImportResponseDTO(
         long weightedPopulation,
         @ArraySchema(schema = @Schema(implementation = CandidateWeightedResultDTO.class,
                 description = "Resultados ponderados por candidato"))
-        List<CandidateWeightedResultDTO> candidates
+        List<CandidateWeightedResultDTO> candidates,
+        @ArraySchema(schema = @Schema(implementation = PollGroupBreakdownDTO.class,
+                description = "Detalhamento por estado e grupo de porte"))
+        List<PollGroupBreakdownDTO> groupBreakdown
 ) {
 }
 

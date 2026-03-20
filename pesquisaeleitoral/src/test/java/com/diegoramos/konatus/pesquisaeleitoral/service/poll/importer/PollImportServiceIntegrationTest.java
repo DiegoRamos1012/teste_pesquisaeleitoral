@@ -6,6 +6,8 @@ import com.diegoramos.konatus.pesquisaeleitoral.domain.State;
 import com.diegoramos.konatus.pesquisaeleitoral.repository.CandidateRepository;
 import com.diegoramos.konatus.pesquisaeleitoral.repository.MunicipalityRepository;
 import com.diegoramos.konatus.pesquisaeleitoral.repository.StateRepository;
+import com.diegoramos.konatus.pesquisaeleitoral.service.poll.result.CandidateWeightedResult;
+import com.diegoramos.konatus.pesquisaeleitoral.service.poll.result.PollImportResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -71,6 +73,8 @@ class PollImportServiceIntegrationTest {
         assertThat(result.pollId()).isEqualTo("PESQ-TESTE-2026");
         assertThat(result.pollDate()).isEqualTo(LocalDate.of(2026, 3, 10));
         assertThat(result.weightedPopulation()).isEqualTo(2_000_000L);
+        assertThat(result.groupBreakdown()).hasSize(2);
+        assertThat(result.groupBreakdown().getFirst().stateAcronym()).isEqualTo("SP");
 
         List<CandidateWeightedResult> candidates = result.weightedCandidateResults();
         assertThat(candidates).hasSize(2);

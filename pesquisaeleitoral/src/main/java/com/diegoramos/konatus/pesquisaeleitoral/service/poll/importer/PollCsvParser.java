@@ -1,6 +1,7 @@
 package com.diegoramos.konatus.pesquisaeleitoral.service.poll.importer;
 
 import com.diegoramos.konatus.pesquisaeleitoral.exceptions.BusinessException;
+import com.diegoramos.konatus.pesquisaeleitoral.service.poll.result.ResearchLine;
 import com.opencsv.CSVReader;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
