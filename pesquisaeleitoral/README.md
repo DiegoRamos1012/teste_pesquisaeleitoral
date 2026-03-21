@@ -112,6 +112,7 @@ Regras importantes:
 
 ## Documentacao complementar
 
+- `DOCUMENTACAO_PASSO_A_PASSO.md`: fluxo completo do sistema (do setup ao resultado final)
 - `GUIA_DE_USO.md`: guia detalhado do fluxo
 - `RECURSOS_ATUAIS.md`: capacidades implementadas
 - `RISCOS_E_PENDENCIAS.md`: riscos e pendencias
