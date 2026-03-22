@@ -42,4 +42,22 @@ public class Municipality extends BaseEntity {
         }
         this.population = population;
     }
+
+    public boolean syncFromIbge(String municipalityName, int population) {
+        String normalizedName = requireText(municipalityName, "Nome do municipio");
+        if (population < 0) {
+            throw new BusinessException("População nao pode ser negativa");
+        }
+
+        boolean changed = false;
+        if (!this.name.equals(normalizedName)) {
+            this.name = normalizedName;
+            changed = true;
+        }
+        if (this.population != population) {
+            this.population = population;
+            changed = true;
+        }
+        return changed;
+    }
 }

@@ -31,4 +31,13 @@ public class State extends BaseEntity {
         this.name = requireText(name, "Nome do estado");
     }
 
+    public boolean syncFromIbge(String stateName) {
+        String normalizedName = requireText(stateName, "Nome do estado");
+        if (this.name.equals(normalizedName)) {
+            return false;
+        }
+        this.name = normalizedName;
+        return true;
+    }
+
 }

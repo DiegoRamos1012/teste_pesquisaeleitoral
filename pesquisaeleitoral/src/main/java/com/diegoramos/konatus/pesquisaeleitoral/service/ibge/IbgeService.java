@@ -12,12 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -67,8 +62,7 @@ public class IbgeService {
 
             State state = statesByAcronym.get(acronym);
             if (state != null) {
-                if (!state.getName().equals(stateName)) {
-                    state.updateName(stateName);
+                if (state.syncFromIbge(stateName)) {
                     statesUpdated++;
                 }
             } else {
@@ -98,8 +92,7 @@ public class IbgeService {
 
                 Municipality municipality = municipalitiesByName.get(normalizeName(municipalityName));
                 if (municipality != null) {
-                    if (municipality.getPopulation() != population) {
-                        municipality.updatePopulation(population);
+                    if (municipality.syncFromIbge(municipalityName, population)) {
                         stateMunicipalitiesUpdated++;
                     }
                 } else {
@@ -119,10 +112,10 @@ public class IbgeService {
             int percentage = totalStates == 0 ? 100 : (int) Math.round((statesProcessed * 100.0) / totalStates);
             long stateElapsedMillis = nanosToMillis(System.nanoTime() - stateStartedAt);
             long elapsedMillis = nanosToMillis(System.nanoTime() - startedAt);
-            long avgPerStateMillis = statesProcessed == 0 ? 0 : elapsedMillis / statesProcessed;
+            long avgPerStateMillis = elapsedMillis / statesProcessed;
             long etaMillis = Math.max(0, avgPerStateMillis * (totalStates - statesProcessed));
             log.info(
-                    "[{}] IBGE sync {} {}% ({}/{}) UF={} municipios={} novos={} atualizados={} tempoUF={} ETA={}",
+                    "[{}] IBGE sync {} {}% ({}/{}) UF = {} municipios = {} novos = {} atualizados = {} tempoUF = {} ETA = {}",
                     runId,
                     buildProgressBar(statesProcessed, totalStates),
                     String.format("%3d", percentage),
@@ -139,7 +132,7 @@ public class IbgeService {
 
         long elapsedMillis = (System.nanoTime() - startedAt) / 1_000_000;
         log.info(
-                "[{}] IBGE sync concluido em {} ({} ms) (estados criados={}, estados atualizados={}, municipios criados={}, municipios atualizados={}, force={})",
+                "[{}] IBGE sync concluido em {} ({} ms) (estados criados = {}, estados atualizados = {}, municipios criados = {}, municipios atualizados = {}, force = {})",
                 runId,
                 formatDuration(elapsedMillis),
                 elapsedMillis,
