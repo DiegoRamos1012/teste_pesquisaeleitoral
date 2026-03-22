@@ -109,3 +109,29 @@ Regras:
 ## Docker
 
 Para executar com containers (API + PostgreSQL), consulte `DOCKER.md`.
+
+## Testes unitários existentes
+
+Atualmente o projeto possui os seguintes testes unitários:
+
+- `PollCsvParserTest`: valida reconhecimento de cabeçalhos do CSV (incluindo aliases), parsing de data e validação de percentual inválido.
+- `IbgeServiceTest`: valida sincronização do IBGE para cenários de criação e idempotência (sem regravação desnecessária).
+- `PollWeightAccumulatorTest`: valida o cálculo da média ponderada por população.
+
+Também existem testes adicionais (não unitários puros):
+
+- `PollImportServiceIntegrationTest` (integração)
+- `PollImportControllerTest` (camada web/controller)
+- `PesquisaeleitoralApplicationTests` (context load)
+
+### Executar apenas testes unitários
+
+```powershell
+.\mvnw.cmd "-Dtest=PollCsvParserTest,IbgeServiceTest,PollWeightAccumulatorTest" test
+```
+
+### Executar suíte completa
+
+```powershell
+.\mvnw.cmd test
+```
