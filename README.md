@@ -1,6 +1,6 @@
 # 📊 Pesquisa Eleitoral API
 
-Este projeto foi desenvolvido para o processo seletivo de desenvolvedor júnior da empresa **Konatus**.
+Este projeto foi desenvolvido para o processo seletivo de desenvolvedor júnior da empresa **Konatus**. Repositório do dashboard para análise dos dados: https://github.com/DiegoRamos1012/dashboard-pesquisa-eleitoral.
 
 ---
 
