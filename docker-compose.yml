@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: pesquisa_db
+    environment:
+      POSTGRES_DB: pesquisaeleitoral
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pesquisa_network
+
+  api:
+    build:
+      context: ./pesquisaeleitoral
+      dockerfile: Dockerfile
+    container_name: pesquisa_api
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: pesquisaeleitoral
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      SPRING_PROFILES_ACTIVE: local
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - pesquisa_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  pesquisa_network:
+    driver: bridge
+
