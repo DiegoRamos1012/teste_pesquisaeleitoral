@@ -1,7 +1,7 @@
 package com.diegoramos.konatus.pesquisaeleitoral.domain;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,13 +23,5 @@ public class Candidate extends BaseEntity {
 
     public static Candidate create(String name, String politicalParty) {
         return new Candidate(name, politicalParty);
-    }
-
-    public void updateName(String name) {
-        this.name = requireText(name, "Nome do candidato");
-    }
-
-    public void updatePoliticalParty(String politicalParty) {
-        this.politicalParty = requireText(politicalParty, "Partido do candidato");
     }
 }

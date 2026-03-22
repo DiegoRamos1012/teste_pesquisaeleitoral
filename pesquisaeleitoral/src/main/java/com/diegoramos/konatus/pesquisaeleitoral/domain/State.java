@@ -26,11 +26,7 @@ public class State extends BaseEntity {
     public static State create(String name, String stateAcronym) {
         return new State(name, stateAcronym);
     }
-
-    public void updateName(String name) {
-        this.name = requireText(name, "Nome do estado");
-    }
-
+    
     public boolean syncFromIbge(String stateName) {
         String normalizedName = requireText(stateName, "Nome do estado");
         if (this.name.equals(normalizedName)) {
